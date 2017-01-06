@@ -13,8 +13,10 @@ void getEnter(string str) //  separar por raices, $ conserva la palabra.// Quita
   int top = 0;
   bool d = false; // particular case
   int origbottom = 0; // particular case, exp:  [[-s|s]] origbottom = 2, bottom =5;
+
   for(int i=1; i < str.length(); i++, d = false)
   {
+
     if(!globQ.empty() && str[i] == ' ' && globQ.back().first != "$"){
       pair<string,string> p;
       p.first = "$"; // space between words.
@@ -58,21 +60,22 @@ void getEnter(string str) //  separar por raices, $ conserva la palabra.// Quita
 
 queue< pair<string,string> > tmpQ;
 
-int match(string str, int bottom)
+
+string match(string str, int bottom, string final)
 {
   string tmp = "";
   if(globQ.empty() && tmpQ.empty()){
     if(bottom < str.length())
-      cout<< str.substr(bottom, str.length() - bottom); ///////////////// archivo
-    return 0;
+    final.append(str.substr(bottom, str.length() - bottom)); /////////////////
+    return final;
   }
   if(globQ.front().first == "$")
     globQ.pop();
 
   if(globQ.empty() && tmpQ.empty() ){
       if(bottom < str.length())
-        cout<< str.substr(bottom, str.length() - bottom); ///////////////// archivo
-      return 0;
+    final.append(str.substr(bottom, str.length() - bottom)); ///////////////// queue
+      return final;
     }
 
   if(tmpQ.empty()){
@@ -102,26 +105,27 @@ int match(string str, int bottom)
   {
     //cout<<tmp<<endl;
     //<<'"'<<pos<<" "<<bottom<<" "<<str[bottom]<<'"'<<
-    cout<<str.substr(bottom, pos - bottom);     //////////////////
+    final.append(str.substr(bottom, pos - bottom));     //////////////////
     while(!tmpQ.empty()){
-      cout<<tmpQ.front().second;  ///////////////////
+      final.append(tmpQ.front().second);  ///////////////////
       tmpQ.pop();
     }
-    match(str, pos + tmp.length()) ;
+    final.append((match(str, pos + tmp.length(),"")) );
   }
   else{ // completar la cadena en el salto de linea
       if(bottom < str.length())
-        cout<< str.substr(bottom, str.length() - bottom);  ///////////////
-      return 0;
+        final.append(str.substr(bottom, str.length() - bottom));  ///////////////
+      return final;
     }
 
-    return 0;
+    return final;
 }
 
 int main(int argc, char const *argv[]) {
   ifstream input1(argv[1]);
   ifstream input2(argv[2]);
   string line;
+  string final;
 
   while(getline(input1,line)){
     getEnter(line);
@@ -132,29 +136,29 @@ int main(int argc, char const *argv[]) {
         cout<<"$"<<endl;
         globQ.push(p);
       }
-    } // Salto de linea !!! ESPACIO
-    /*while ( !globQ.empty()){
-      cout<<globQ.front().first<<" ";
-      if(globQ.front().second != "NULL")
-        cout<<globQ.front().second;
-      cout<<endl;
-      //globQ.pop();
     }
-    */
+//////////////////////////////////////////////////////
   }
 
   while(getline(input2,line)){
-      if(line == "")
+    final = "";
+    if(line == "")
         continue;
-      if(!globQ.empty() || !tmpQ.empty()){
-        match(line,0);
-        //cout<<endl<<"Siguiente linea: "<<endl;
-        cout<<endl;
-      }
-      else
-        cout<<line<<endl;
 
-      //else
+       if(isupper(line[0]))
+         final.append("\n# ");
+      if(!globQ.empty() || !tmpQ.empty()){
+        final.append(match(line,0,""));
+        //final.append("\n");
+        cout<<final;
+    }
+    else{
+
+        final.append(line);
+        final.append("\n");
+        cout<<final;
+      }
+
 
     }
 
