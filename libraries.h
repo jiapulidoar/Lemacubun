@@ -13,7 +13,7 @@
 
    Some libraries and functiones used by various programs.
 */
-
+// save firt upper second case and find it;
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -115,19 +115,33 @@ string match(string str, int bottom, string final)
         tmp2Q.pop();
       }
   }
-  tmp[0] = tolower(tmp[0]); // Problem with upper, check it! .
-  int pos = str.find(tmp);
+  int pos;
 
+  tmp[0] = tolower(tmp[0]); // Problem with upper, check it! .
+  pos = str.find(tmp);
+  if( pos  == -1  ){
+    tmp[0] = toupper(tmp[0]);
+    pos = str.find(tmp);
+  }
+
+  cout<<tmp<<" "<<"######"<<" "<<pos<<endl;
   //cout<<"position "<<tmp<<": "<<pos<<endl;
+
+  if(pos < bottom){ //// Cuadno la pos ya alcance el final del str
+    if(bottom < str.length())
+      final.append(str.substr(bottom, str.length() - bottom));  ///////////////
+    return final;
+  }
   if(pos >= 0)
   {
-    //cout<<tmp<<endl;
+
     //<<'"'<<pos<<" "<<bottom<<" "<<str[bottom]<<'"'<<
     final.append(str.substr(bottom, pos - bottom));     //////////////////
     while(!tmpQ.empty()){
       final.append(tmpQ.front().second);  ///////////////////
       tmpQ.pop();
     }
+    str[pos] = '#';
     final.append((match(str, pos + tmp.length(),"")) );
   }
   else{ // completar la cadena en el salto de linea
@@ -137,4 +151,87 @@ string match(string str, int bottom, string final)
     }
 
     return final;
+}
+
+int verify(string str, int bottom)
+{
+  string tmp = "";
+  if(globQ.empty() && tmpQ.empty()){
+    if(bottom < str.length())
+    //final.append(str.substr(bottom, str.length() - bottom)); /////////////////
+    return 0;
+  }
+  if(globQ.front().first == "$")
+    globQ.pop();
+
+  if(globQ.empty() && tmpQ.empty() ){
+      if(bottom < str.length())
+    //final.append(str.substr(bottom, str.length() - bottom)); ///////////////// queue
+      return 0;
+    }
+
+  if(tmpQ.empty()){
+    //cout<<"start enque"<<endl;
+    //cout<<globQ.front().first<<endl;
+    while( globQ.front().first != "$")
+    {
+      tmpQ.push(globQ.front());
+      tmp.append(globQ.front().first);
+      globQ.pop();
+      if(globQ.empty())
+        break;
+    }
+  }else{      /////// tmp queda vacio entonces hay que append de nuevo
+    queue< pair<string,string> > tmp2Q;
+    tmp2Q = tmpQ;
+    while( !tmp2Q.empty()){
+        tmp.append(tmp2Q.front().first);
+        tmp2Q.pop();
+      }
+  }
+  if(tmp[0] != 'Z')
+    tmp[0] = tolower(tmp[0]); // Problem with upper, check it! .
+
+  if(tmp[0] == 'z')
+    tmp[0] = toupper(tmp[0]);
+
+  int pos = str.find(tmp);
+
+  //cout<<"position "<<tmp<<": "<<pos<<endl;
+  if(pos >= 0)
+  {
+    //cout<<tmp<<endl;
+    //<<'"'<<pos<<" "<<bottom<<" "<<str[bottom]<<'"'<<
+    //final.append(str.substr(bottom, pos - bottom));     //////////////////
+    while(!tmpQ.empty()){
+      tmpQ.pop();
+    }
+    verify(str, pos + tmp.length());
+  }
+  else return 0;
+}
+
+
+string sup(string strk) /// Fix remove <sup>#REMOVE#THIS#</sup>
+{
+    string str = strk;
+    string strf = "";
+    string sup = "<sup>";
+    string supf = "</sup>";
+    int bot = 0, top = 0;
+
+    bot = str.find(sup);
+    while( bot >= 0 )
+    {
+      top = str.find(supf) + supf.length();
+      strf.append(str.substr(0, bot));
+      //cout<<bot<<endl;
+      strf.append( str.substr(top, str.length() - top)  );
+      str = strf;
+      strf = "";
+      bot = str.find(sup);
+    }
+
+    return str;
+
 }

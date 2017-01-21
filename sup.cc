@@ -9,14 +9,13 @@
 \*************************************************************************/
 
 
-/* lemacubun1.cc
+/* sup.cc
 */
 
 #include "libraries.h" //## local library
 #include <iostream>
 #include <string>
 #include <stdio.h>
-
 #include <queue>
 #include <fstream>
 #include <ctype.h>
@@ -24,46 +23,10 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-  ifstream input1(argv[1]);
-  ifstream input2(argv[2]);
   string line;
-  string final;
+  getline(cin,line);
 
-  while(getline(input1,line)){
-    line = sup(line);
-    getEnter(line);
-    {
-      if(globQ.back().first != "$"){
-        pair<string,string> p;
-        p.first = "$"; // space between word
-        cout<<"$"<<endl;
-        globQ.push(p);
-      }
-    }
-//////////////////////////////////////////////////////
-  }
-
-  while(getline(input2,line)){
-    final = "";
-    if(line == "")
-        continue;
-
-       if(isupper(line[0]))
-         final.append("\n# ");
-      if(!globQ.empty() || !tmpQ.empty()){
-        final.append(match(line,0,""));
-        //final.append("\n");
-        cout<<final;
-    }
-    else{
-
-        final.append(line);
-        final.append("\n");
-        cout<<final;
-      }
-
-
-    }
+  cout<<sup(line)<<endl;
 
 
   return 0;
